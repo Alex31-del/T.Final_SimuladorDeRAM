@@ -32,4 +32,5 @@ public class VentanaPrincipal extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         setVisible(true);
+    }
 }
