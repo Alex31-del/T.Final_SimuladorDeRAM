@@ -4,15 +4,25 @@
  */
 package t.final_simuladorderam;
 
-/**
- *
- * @author user
- */
+import javax.swing.UIManager;
+
+
 public class ClasePrincipal{
 
     
     public static void main(String[] args) {
-        new VentanaPrincipal();
+        try {
+        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                UIManager.setLookAndFeel(info.getClassName());
+                break;
+            }
+        }
+    } catch (Exception e) {
+       
+    }
+    
+    new VentanaPrincipal();
     }
     
 }

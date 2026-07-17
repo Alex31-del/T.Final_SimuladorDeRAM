@@ -29,7 +29,15 @@ public class PanelProcesos extends JPanel implements ActionListener{
         this.panelRam = panelRam;
         setLayout(new BorderLayout());
         
-        JPanel datos = new JPanel(new GridLayout(5,3));
+        JPanel datos = new JPanel(new GridLayout(5,3,8,8));
+        datos.setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
+        datos.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createLineBorder(new Color(180,180,180)),
+        "Nuevo Proceso",
+        javax.swing.border.TitledBorder.LEFT,
+        javax.swing.border.TitledBorder.TOP,
+        new Font("SansSerif", Font.BOLD, 13)
+));
         lNombre = new JLabel("Nombre:");
         tNombre  = new JTextField();
         
@@ -49,7 +57,18 @@ public class PanelProcesos extends JPanel implements ActionListener{
         bEliminar.addActionListener(this);
         bColor = new JButton("Elegir color");
         bColor.addActionListener(this);
-
+        
+        bCrear.setBackground(new Color(76, 175, 80));   
+        bCrear.setForeground(Color.WHITE);
+        bCrear.setFocusPainted(false);
+        
+        bEliminar.setBackground(new Color(244, 67, 54)); 
+        bEliminar.setForeground(Color.WHITE);
+        bEliminar.setFocusPainted(false);
+        
+        bColor.setBackground(new Color(33, 150, 243));   
+        bColor.setForeground(Color.WHITE);
+        bColor.setFocusPainted(false);
         
         datos.add(lNombre);
         datos.add(tNombre);
@@ -71,6 +90,12 @@ public class PanelProcesos extends JPanel implements ActionListener{
         modelo.addColumn("Estado");
         
         tProceso = new JTable(modelo);
+        tProceso.setRowHeight(28);                        // filas más cómodas de leer
+        tProceso.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        tProceso.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
+        tProceso.getTableHeader().setBackground(new Color(230,230,230));
+        tProceso.setSelectionBackground(new Color(184, 207, 229)); // azul clarito al seleccionar fila
+        tProceso.setGridColor(new Color(220,220,220));
         
         add(new JScrollPane(tProceso), BorderLayout.CENTER);
     }

@@ -18,19 +18,19 @@ public class VentanaPrincipal extends JFrame {
         pnlProcesos = new PanelProcesos(memoria, pnlRam);
 
         
-        setTitle("Simulador de Memoria RAM");
+        setTitle("🖥 Simulador de Memoria RAM");
 
-        setLayout(new BorderLayout());
-
+        setLayout(new BorderLayout(10,10));
+        getContentPane().setBackground(Color.WHITE);
+       ((JComponent) getContentPane()).setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    
         add(pnlProcesos, BorderLayout.WEST);
         add(pnlRam, BorderLayout.CENTER);
-
+        
+        setMinimumSize(new Dimension(700, 500));
         setSize(800,600);
-
         setLocationRelativeTo(null);
-
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
         setVisible(true);
     }
 }
