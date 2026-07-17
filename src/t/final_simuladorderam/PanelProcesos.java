@@ -147,34 +147,40 @@ public class PanelProcesos extends JPanel implements ActionListener{
                 Proceso p = new Proceso(nombre, memoriaProceso, colorProceso);
 
                 String algoritmo = cAlgoritmo.getSelectedItem().toString();
-
+                
+                boolean asignado = false;
+                
                 switch (algoritmo) {
 
                     case "First Fit":
-                        memoria.firstFit(p);
+                       asignado = memoria.firstFit(p);
                     break;
 
                      case "Best Fit":
-                        memoria.bestFit(p);
+                        asignado=memoria.bestFit(p);
                     break;
 
                     case "Worst Fit":
-                        memoria.worstFit(p);
+                        asignado = memoria.worstFit(p);
                     break;
+                }
+                if(!asignado){
+                    JOptionPane.showMessageDialog(this,"No hay suficiente espacio en la RAM para este proceso.",
+                        "Memoria insuficiente",JOptionPane.WARNING_MESSAGE);
+                    return; 
+        
+    
                 }
 
                 actualizarTabla();
                 limpiarCampos();
-
+                panelRam.repaint();
             } catch (NumberFormatException e) {
 
                  JOptionPane.showMessageDialog(this,"La memoria debe ser un número.");
             }  
             
-            actualizarTabla();
-            limpiarCampos();
-            System.out.println("Llamando a repaint...");
-            panelRam.repaint();
+            
         }
         
         private void eliminarProceso(){

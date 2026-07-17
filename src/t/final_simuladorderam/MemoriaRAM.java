@@ -47,7 +47,7 @@ public class MemoriaRAM {
         
     }
     
-    public void firstFit(Proceso p){
+    public boolean firstFit(Proceso p){
         
          for(int i=0;i<bloques.size();i++){
 
@@ -57,70 +57,72 @@ public class MemoriaRAM {
 
                 dividirMemoria(bloque,p);
 
-                return;
+                return true;
             }
 
         }
+         return false;
     }
     
-    public void bestFit(Proceso p){
+    public boolean bestFit(Proceso p){
         
         BloqueMemoria mejor = null;
         
-          for(int i = 0; i < bloques.size(); i++){
+        for(int i = 0; i < bloques.size(); i++){
 
-        BloqueMemoria bloque = bloques.get(i);
+            BloqueMemoria bloque = bloques.get(i);
 
-        if(!bloque.isOcupado() &&
-           bloque.getTamano() >= p.getMemoria()){
+            if(!bloque.isOcupado() &&
+                  bloque.getTamano() >= p.getMemoria()){
 
-            if(mejor == null ||
-               bloque.getTamano() < mejor.getTamano()){
+                if(mejor == null ||
+                     bloque.getTamano() < mejor.getTamano()){
 
-                mejor = bloque;
+                    mejor = bloque;
+
+                }
 
             }
 
         }
 
-    }
+            if(mejor != null){
 
-    if(mejor != null){
+                dividirMemoria(mejor, p);
+               return true;
 
-        dividirMemoria(mejor, p);
-
-    
-
-    }
+            }
+            return false;
     }
     
-    public void worstFit(Proceso p){
+    public boolean worstFit(Proceso p){
         
         BloqueMemoria mayor = null;
         
         for(int i = 0; i < bloques.size(); i++){
 
-        BloqueMemoria bloque = bloques.get(i);
+             BloqueMemoria bloque = bloques.get(i);
 
-        if(!bloque.isOcupado() &&
-           bloque.getTamano() >= p.getMemoria()){
+            if(!bloque.isOcupado() &&
+                bloque.getTamano() >= p.getMemoria()){
+                
+                if(mayor == null ||
+                    bloque.getTamano() > mayor.getTamano()){
 
-            if(mayor == null ||
-               bloque.getTamano() > mayor.getTamano()){
+                    mayor = bloque;
 
-                mayor = bloque;
+                }
 
-            }
+           }
 
+       }
+
+        if(mayor != null){
+
+            dividirMemoria(mayor, p);
+            return true;
         }
-
-    }
-
-    if(mayor != null){
-
-        dividirMemoria(mayor, p);
-
-    }
+        return false;
     }
     
     
