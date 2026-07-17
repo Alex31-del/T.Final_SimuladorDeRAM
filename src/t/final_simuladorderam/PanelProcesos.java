@@ -15,7 +15,7 @@ public class PanelProcesos extends JPanel implements ActionListener{
     
    private JLabel lNombre, lMemoria,  lAlgoritmo;
    private JTextField tNombre, tMemoria;
-   private JButton bCrear, bEliminar, bColor;
+   private JButton bCrear, bEliminar, bColor, bGuardar, bAbrir;
    private JPanel pnlColorPreview; 
    private JComboBox<String> cAlgoritmo;
    private JTable tProceso;
@@ -30,7 +30,7 @@ public class PanelProcesos extends JPanel implements ActionListener{
         this.panelRam = panelRam;
         setLayout(new BorderLayout());
         
-        JPanel datos = new JPanel(new GridLayout(5,3,8,8));
+        JPanel datos = new JPanel(new GridLayout(6,2,8,8));
         datos.setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
         datos.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createLineBorder(new Color(180,180,180)),
@@ -52,11 +52,23 @@ public class PanelProcesos extends JPanel implements ActionListener{
         cAlgoritmo.addItem("Best Fit");
         cAlgoritmo.addItem("Worst Fit");
         
-        bCrear = new JButton("Crear");
+        bGuardar = new JButton("💾 Guardar");
+        bGuardar.addActionListener(this);
+        bGuardar.setBackground(new Color(96, 125, 139));   
+        bGuardar.setForeground(Color.WHITE);
+        bGuardar.setFocusPainted(false);
+        
+        bAbrir = new JButton("📂 Abrir");
+        bAbrir.addActionListener(this);
+        bAbrir.setBackground(new Color(96, 125, 139));    
+     bAbrir.setForeground(Color.WHITE);
+        bAbrir.setFocusPainted(false);
+        
+        bCrear = new JButton("➕ Crear proceso");
         bCrear.addActionListener(this);
-        bEliminar = new JButton("Eliminar");
+        bEliminar = new JButton("🗑️ Eliminar proceso");
         bEliminar.addActionListener(this);
-        bColor = new JButton("Elegir color");
+        bColor = new JButton("🎨 Elegir color");
         bColor.addActionListener(this);
         pnlColorPreview = new JPanel();                             
         pnlColorPreview.setBackground(colorProceso);                
@@ -87,6 +99,8 @@ public class PanelProcesos extends JPanel implements ActionListener{
         datos.add(bEliminar);
         datos.add(bColor);
         datos.add(pnlColorPreview);
+        datos.add(bGuardar);
+        datos.add(bAbrir);
        
         add(datos, BorderLayout.NORTH);
         modelo  = new DefaultTableModel();
