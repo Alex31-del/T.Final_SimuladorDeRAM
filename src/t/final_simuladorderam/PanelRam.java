@@ -15,14 +15,14 @@ public class PanelRam extends JPanel{
     private final int MARGEN_X = 40;
     private final int MARGEN_Y = 20;
 
-    private final int ANCHO_RAM = 120;
+    private final int ANCHO_RAM = 180;
     private final int ALTO_RAM = 500;
     
     public PanelRam(MemoriaRAM memoria){
         this.memoria=memoria;
         repaint();
         
-        setPreferredSize(new Dimension(250,550));
+        setPreferredSize(new Dimension(300,550));
         setBackground(Color.WHITE);
     }
     
