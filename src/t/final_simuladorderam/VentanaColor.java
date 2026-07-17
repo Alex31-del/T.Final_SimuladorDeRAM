@@ -27,7 +27,7 @@ public class VentanaColor extends JDialog implements ActionListener{
         add(btnAceptar,BorderLayout.SOUTH);
         
         
-        setSize(600,400);
+        setSize(800,400);
         setLocationRelativeTo(padre);
         setTitle("Seleccionar Color");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
