@@ -23,8 +23,8 @@ public class ArchivoMemoria {
 
         FileNameExtensionFilter filtro =
                 new FileNameExtensionFilter(
-                        "Archivos de Memoria (*.txt)",
-                        "txt");
+                        "Archivos de Memoria (*.txt)","txt");
+                        
 
         selector.setFileFilter(filtro);
 
