@@ -55,7 +55,7 @@ public class PanelRam extends JPanel{
 
             if(bloque.isOcupado()){
 
-                g.setColor(new Color(120,180,255));
+                g.setColor(bloque.getProceso().getColor());
 
             }else{
 

@@ -27,4 +27,7 @@ public class Proceso {
     public int getMemoria(){
         return memoria;
     }
+    public Color getColor(){
+        return color;
+    }
 }

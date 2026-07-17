@@ -16,6 +16,7 @@ public class PanelProcesos extends JPanel implements ActionListener{
    private JLabel lNombre, lMemoria,  lAlgoritmo;
    private JTextField tNombre, tMemoria;
    private JButton bCrear, bEliminar, bColor;
+   private JPanel pnlColorPreview; 
    private JComboBox<String> cAlgoritmo;
    private JTable tProceso;
    private DefaultTableModel modelo;
@@ -57,6 +58,9 @@ public class PanelProcesos extends JPanel implements ActionListener{
         bEliminar.addActionListener(this);
         bColor = new JButton("Elegir color");
         bColor.addActionListener(this);
+        pnlColorPreview = new JPanel();                             
+        pnlColorPreview.setBackground(colorProceso);                
+        pnlColorPreview.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
         
         bCrear.setBackground(new Color(76, 175, 80));   
         bCrear.setForeground(Color.WHITE);
@@ -82,6 +86,7 @@ public class PanelProcesos extends JPanel implements ActionListener{
         datos.add(bCrear);
         datos.add(bEliminar);
         datos.add(bColor);
+        datos.add(pnlColorPreview);
        
         add(datos, BorderLayout.NORTH);
         modelo  = new DefaultTableModel();
@@ -91,6 +96,7 @@ public class PanelProcesos extends JPanel implements ActionListener{
         
         tProceso = new JTable(modelo);
         tProceso.setRowHeight(28);                        // filas más cómodas de leer
+        tProceso.getColumnModel().getColumn(2).setCellRenderer(new EstadoRenderer());
         tProceso.setFont(new Font("SansSerif", Font.PLAIN, 13));
         tProceso.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
         tProceso.getTableHeader().setBackground(new Color(230,230,230));
@@ -120,7 +126,8 @@ public class PanelProcesos extends JPanel implements ActionListener{
             if(vc.getColorSeleccionado()!=null){
 
              colorProceso = vc.getColorSeleccionado();
-
+             pnlColorPreview.setBackground(colorProceso);
+             
             }
         }
     }
