@@ -25,7 +25,8 @@ public class VentanaPrincipal extends JFrame {
             return false;
         }
     };
-     private final JTable tablaProcesos = new JTable(modeloTablaProcesos);
+    
+    private final JTable tablaProcesos = new JTable(modeloTablaProcesos);
     private final DefaultTableModel modeloTablaLibres =
             new DefaultTableModel(new Object[]{"Inicio (KB)", "Tamaño (KB)"}, 0) {
         @Override
@@ -33,6 +34,7 @@ public class VentanaPrincipal extends JFrame {
             return false;
         }
     };
+    
     private final JTable tablaLibres = new JTable(modeloTablaLibres);
    
  
@@ -90,6 +92,37 @@ public class VentanaPrincipal extends JFrame {
  
         return panel;
     }
-    
+
+    private void crearProceso() {
+        String nombre = campoNombre.getText().trim();
+        int tamano = (Integer) campoTamano.getValue();
+        int tiempo = (Integer) campoTiempo.getValue();
+        String algoritmo = (String) comboAlgoritmo.getSelectedItem();
+ 
+        if (nombre.isEmpty()) {
+            mostrarError("Debes escribir un nombre para el proceso.");
+            return;
+        }
+        if (nombre.contains(" ")) {
+            mostrarError("El nombre del proceso no debe contener espacios (usa guiones o guion bajo).");
+            return;
+        }
+ 
+        try {
+            Proceso proceso = new Proceso(nombre, tamano, tiempo == 0 ? -1 : tiempo);
+            boolean asignado = gestor.asignarProceso(proceso, algoritmo);
+            if (!asignado) {
+                mostrarError("No hay un bloque libre suficientemente grande para \"" + nombre
+                        + "\" (" + tamano + " KB) usando " + algoritmo
+                        + ".\nPrueba compactar la memoria o liberar procesos.");
+                return;
+            }
+            campoNombre.setText("");
+            actualizarVista();
+        } catch (IllegalArgumentException ex) {
+            mostrarError(ex.getMessage());
+        }
+    }
+
     
 }
