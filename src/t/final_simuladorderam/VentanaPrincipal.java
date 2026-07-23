@@ -4,33 +4,43 @@
  */
 package t.final_simuladorderam;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
+import java.io.*;
 
 public class VentanaPrincipal extends JFrame {
-    private MemoriaRAM  memoria;
-    private PanelProcesos pnlProcesos;
-    private PanelRam pnlRam;
-
-    public VentanaPrincipal() {
-        
-        memoria = new MemoriaRAM(1024);
-        pnlRam = new PanelRam(memoria);
-        pnlProcesos = new PanelProcesos(memoria, pnlRam);
-
-        
-        setTitle("🖥 Simulador de Memoria RAM");
-
-        setLayout(new BorderLayout(10,10));
-        getContentPane().setBackground(Color.WHITE);
-       ((JComponent) getContentPane()).setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    private GestorMemoria gestor;
+    private final PanelMemoria panelMemoria = new PanelMemoria();
+ 
+    private final JTextField campoNombre = new JTextField(10);
+    private final JSpinner campoTamano = new JSpinner(new SpinnerNumberModel(64, 1, 100000, 8));
+    private final JSpinner campoTiempo = new JSpinner(new SpinnerNumberModel(30, 0, 100000, 5));
+    private final JComboBox<String> comboAlgoritmo =new JComboBox<>(new String[]{GestorMemoria.FIRST_FIT, GestorMemoria.BEST_FIT, GestorMemoria.WORST_FIT});
+    private final JTable tablaLibres = new JTable(modeloTablaLibres);
+ 
+    private final JLabel etiquetaEstadisticas = new JLabel();
+    private final JLabel etiquetaEstadoSim = new JLabel("Simulación detenida.");
+    private final JLabel etiquetaAlgoritmoActual = new JLabel("Algoritmo actual: First Fit");
+    private Thread hiloSimulacion;
+    private TareaSimulacion tareaSimulacion;
+    private final JButton botonIniciar = new JButton("Iniciar simulación automática");
+    private final JButton botonDetener = new JButton("Detener simulación");
     
-        add(pnlProcesos, BorderLayout.WEST);
-        add(pnlRam, BorderLayout.CENTER);
-        
-        setMinimumSize(new Dimension(700, 500));
-        setSize(800,600);
+    public VentanaPrincipal() {
+        super("Simulador Visual de Memoria RAM — Programación 2");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1500, 680);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
+ 
+        iniciarNuevaSimulacion(1024);
+ 
+        setLayout(new BorderLayout(8, 8));
+        add(construirPanelSuperior(), BorderLayout.NORTH);
+        add(construirPanelCentral(), BorderLayout.CENTER);
+        add(construirBarraEstado(), BorderLayout.SOUTH);
+ 
+        actualizarVista();
     }
 }

@@ -4,6 +4,7 @@
  */
 package t.final_simuladorderam;
 
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 
@@ -14,15 +15,17 @@ public class ClasePrincipal{
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                     UIManager.setLookAndFeel(info.getClassName());
-                break;
-               }
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
             }
-       } catch (Exception e) {
-       
+        } catch (Exception e) {
+            // Si Nimbus no está disponible, se usa el look and feel por defecto de Swing.
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            VentanaPrincipal ventana = new VentanaPrincipal();
+            ventana.setVisible(true);
+        });
     }
-    
-    new VentanaPrincipal();
-    }
-    
 }
