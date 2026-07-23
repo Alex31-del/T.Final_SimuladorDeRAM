@@ -59,4 +59,8 @@ public class VentanaPrincipal extends JFrame {
  
         actualizarVista();
     }
+    
+    
+    
+    
 }
