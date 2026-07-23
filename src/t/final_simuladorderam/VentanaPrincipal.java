@@ -124,5 +124,32 @@ public class VentanaPrincipal extends JFrame {
         }
     }
 
-    
+    private void actualizarVista() {
+        List<BloqueMemoria> bloques = gestor.getBloques();
+        panelMemoria.actualizar(bloques, gestor.getTamanoTotal());
+ 
+        modeloTablaProcesos.setRowCount(0);
+        int id = 1;
+        for (BloqueMemoria b : bloques) {
+            if (b.isOcupado()) {
+                Proceso p = b.getProceso();
+                String tiempo = p.esInfinito() ? "∞" : String.valueOf(p.getTiempoRestante());
+                modeloTablaProcesos.addRow(new Object[]{
+                        "P" + id, p.getNombre(), p.getTamano(), "Ejecutando", tiempo
+                });
+                id++;
+            }
+        }
+ 
+        modeloTablaLibres.setRowCount(0);
+        for (BloqueMemoria b : gestor.getBloquesLibres()) {
+            modeloTablaLibres.addRow(new Object[]{b.getInicio(), b.getTamano()});
+        }
+ 
+        EstadisticasMemoria e = gestor.calcularFragmentacion();
+        etiquetaEstadisticas.setText(String.format(
+                "  Uso: %d/%d KB (%d%%)   |   Libre: %d KB   |   Huecos libres: %d   |   Mayor hueco: %d KB   |   Fragmentación externa: %d%%",
+                e.getUsado(), e.getTamanoTotal(), e.getPorcentajeUso(), e.getLibre(),
+                e.getHuecos(), e.getMayorHueco(), e.getFragmentacionExterna()));
+    }
 }
