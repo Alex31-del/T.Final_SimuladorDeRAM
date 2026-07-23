@@ -47,16 +47,7 @@ public class GestorMemoria implements Serializable{
     public List<String> getHistorial() {
         return historial;
     }
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
+       
      public String simularCambioAleatorio(String algoritmo) {
         List<Integer> ocupados = new ArrayList<>();
         for (int i = 0; i < bloques.size(); i++) {
@@ -83,6 +74,7 @@ public class GestorMemoria implements Serializable{
             }
             return crecerProceso(idx, algoritmo, tamanoMaximo);
     }
+    
      private String achicarProceso(int idx, int tamanoMinimo) {
         BloqueMemoria actual = bloques.get(idx);
         Proceso p = actual.getProceso();
@@ -111,6 +103,7 @@ public class GestorMemoria implements Serializable{
          registrar(msg);
         return msg;
         }
+    
      private String crecerProceso(int idx, String algoritmo, int tamanoMaximo) {
         BloqueMemoria actual = bloques.get(idx);
         Proceso p = actual.getProceso();
@@ -177,6 +170,7 @@ public class GestorMemoria implements Serializable{
         registrar(msg);
         return msg;
         }
+    
      public String generarReporte() {
         EstadisticasMemoria e = calcularFragmentacion();
         StringBuilder sb = new StringBuilder();
@@ -200,6 +194,87 @@ public class GestorMemoria implements Serializable{
         }
         return sb.toString();
     }
+
+    public boolean asignarProceso(Proceso p, String algoritmo) {
+        if (p.getNombre() == null || p.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del proceso no puede estar vacío.");
+        }
+        if (p.getTamano() <= 0) {
+            throw new IllegalArgumentException("El tamaño del proceso debe ser mayor a 0 KB.");
+        }
+        if (p.getTamano() > tamanoTotal) {
+            throw new IllegalArgumentException("El proceso no puede ser más grande que la memoria total.");
+        }
+        for (BloqueMemoria b : bloques) {
+            if (b.isOcupado() && b.getProceso().getNombre().equalsIgnoreCase(p.getNombre())) {
+                throw new IllegalArgumentException("Ya existe un proceso llamado \"" + p.getNombre() + "\".");
+            }
+        }
+
+        int indiceElegido = buscarBloque(p.getTamano(), algoritmo);
+        if (indiceElegido == -1) {
+            registrar("FALLÓ asignación de " + p.getNombre() + " (" + p.getTamano() + " KB): sin espacio suficiente ("
+                    + algoritmo + ").");
+            return false;
+        }
+
+        BloqueMemoria elegido = bloques.get(indiceElegido);
+        int inicio = elegido.getInicio();
+        int sobrante = elegido.getTamano() - p.getTamano();
+
+        BloqueMemoria ocupado = new BloqueMemoria(inicio, p.getTamano(), true, p);
+        bloques.set(indiceElegido, ocupado);
+
+        if (sobrante > 0) {
+            BloqueMemoria libreRestante = new BloqueMemoria(inicio + p.getTamano(), sobrante, false, null);
+            bloques.add(indiceElegido + 1, libreRestante);
+        }
+
+        registrar("Asignado " + p.getNombre() + " (" + p.getTamano() + " KB) en dirección " + inicio
+                + " usando " + algoritmo + ".");
+        return true;
+    }
+
+    private int buscarBloque(int tamanoSolicitado, String algoritmo) {
+        int indiceEncontrado = -1;
+
+        switch (algoritmo) {
+            case FIRST_FIT:
+                for (int i = 0; i < bloques.size(); i++) {
+                    if (bloques.get(i).puedeAlojar(tamanoSolicitado)) {
+                        return i;
+                    }
+                }
+                break;
+
+            case BEST_FIT:
+                int mejorTamano = Integer.MAX_VALUE;
+                for (int i = 0; i < bloques.size(); i++) {
+                    BloqueMemoria b = bloques.get(i);
+                    if (b.puedeAlojar(tamanoSolicitado) && b.getTamano() < mejorTamano) {
+                        mejorTamano = b.getTamano();
+                        indiceEncontrado = i;
+                    }
+                }
+                break;
+
+            case WORST_FIT:
+                int peorTamano = -1;
+                for (int i = 0; i < bloques.size(); i++) {
+                    BloqueMemoria b = bloques.get(i);
+                    if (b.puedeAlojar(tamanoSolicitado) && b.getTamano() > peorTamano) {
+                        peorTamano = b.getTamano();
+                        indiceEncontrado = i;
+                    }
+                }
+                break;
+
+            default:
+                throw new IllegalArgumentException("Algoritmo desconocido: " + algoritmo);
+        }
+        return indiceEncontrado;
+    }
+
     
      public static class EstadisticasMemoria {
         private final int tamanoTotal;
