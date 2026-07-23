@@ -60,7 +60,36 @@ public class VentanaPrincipal extends JFrame {
         actualizarVista();
     }
     
-    
+    private JPanel construirPanelSuperior() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
+        panel.setBorder(new TitledBorder("Crear proceso y asignar memoria"));
+ 
+        panel.add(new JLabel("Nombre:"));
+        panel.add(campoNombre);
+        panel.add(new JLabel("Tamaño (KB):"));
+        panel.add(campoTamano);
+        panel.add(new JLabel("Tiempo (seg, 0 = infinito):"));
+        panel.add(campoTiempo);
+        panel.add(new JLabel("Algoritmo:"));
+        comboAlgoritmo.addActionListener(e ->
+                etiquetaAlgoritmoActual.setText("Algoritmo actual: " + comboAlgoritmo.getSelectedItem()));
+        panel.add(comboAlgoritmo);
+ 
+        JButton botonCrear = new JButton("Crear y asignar proceso");
+        botonCrear.addActionListener(e -> crearProceso());
+        botonCrear.setBackground(new Color(76, 175, 80));
+        botonCrear.setForeground(Color.WHITE);
+        botonCrear.setOpaque(true);
+        botonCrear.setBorderPainted(false);
+        botonCrear.setFocusPainted(false);
+        panel.add(botonCrear);
+ 
+        JButton botonNuevaSim = new JButton("Nueva simulación...");
+        botonNuevaSim.addActionListener(e -> pedirNuevaSimulacion());
+        panel.add(botonNuevaSim);
+ 
+        return panel;
+    }
     
     
 }
