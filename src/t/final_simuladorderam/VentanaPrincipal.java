@@ -18,7 +18,23 @@ public class VentanaPrincipal extends JFrame {
     private final JSpinner campoTamano = new JSpinner(new SpinnerNumberModel(64, 1, 100000, 8));
     private final JSpinner campoTiempo = new JSpinner(new SpinnerNumberModel(30, 0, 100000, 5));
     private final JComboBox<String> comboAlgoritmo =new JComboBox<>(new String[]{GestorMemoria.FIRST_FIT, GestorMemoria.BEST_FIT, GestorMemoria.WORST_FIT});
+    private final DefaultTableModel modeloTablaProcesos =
+            new DefaultTableModel(new Object[]{"ID", "Nombre", "Memoria (KB)", "Estado", "Tiempo (seg)"}, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+     private final JTable tablaProcesos = new JTable(modeloTablaProcesos);
+    private final DefaultTableModel modeloTablaLibres =
+            new DefaultTableModel(new Object[]{"Inicio (KB)", "Tamaño (KB)"}, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
     private final JTable tablaLibres = new JTable(modeloTablaLibres);
+   
  
     private final JLabel etiquetaEstadisticas = new JLabel();
     private final JLabel etiquetaEstadoSim = new JLabel("Simulación detenida.");
