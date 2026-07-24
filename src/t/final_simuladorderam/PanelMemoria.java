@@ -1,3 +1,5 @@
+package t.final_simuladorderam;
+
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
