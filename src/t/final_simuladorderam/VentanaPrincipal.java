@@ -258,6 +258,25 @@ public class VentanaPrincipal extends JFrame {
         hiloSimulacion = new Thread(tareaSimulacion);
         hiloSimulacion.start(); // OJO: start(), nunca run() directamente
     }
+    private void liberarProceso() {
+        int fila = tablaProcesos.getSelectedRow();
+        if (fila == -1) {
+            mostrarError("Selecciona primero un proceso de la tabla para liberarlo.");
+            return;
+        }
+        String nombreProceso = (String) modeloTablaProcesos.getValueAt(fila, 1);
+        boolean ok = gestor.liberarProceso(nombreProceso);
+        if (!ok) {
+            mostrarError("El proceso seleccionado ya no existe en memoria.");
+        }
+        actualizarVista();
+    }
+    private void compactarMemoria() {
+        gestor.compactar();
+        actualizarVista();
+        JOptionPane.showMessageDialog(this, "Memoria compactada correctamente.",
+                "Compactación", JOptionPane.INFORMATION_MESSAGE);
+    }
     
      private void detenerSimulacionAutomatica() {
         if (tareaSimulacion != null) {
@@ -300,6 +319,35 @@ public class VentanaPrincipal extends JFrame {
     }
      private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Atención", JOptionPane.WARNING_MESSAGE);
+    }
+    private void guardarSimulacion() {
+        JFileChooser chooser = new JFileChooser(new File("."));
+        chooser.setSelectedFile(new File("simulacion.mem"));
+        int resultado = chooser.showSaveDialog(this);
+        if (resultado != JFileChooser.APPROVE_OPTION) return;
+ 
+        try {
+            ArchivoMemoria.guardar(gestor, chooser.getSelectedFile().getAbsolutePath());
+            JOptionPane.showMessageDialog(this, "Simulación guardada correctamente.",
+                    "Guardado", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            mostrarError("No se pudo guardar el archivo: " + ex.getMessage());
+        }
+    }
+    private void cargarSimulacion() {
+        JFileChooser chooser = new JFileChooser(new File("."));
+        int resultado = chooser.showOpenDialog(this);
+        if (resultado != JFileChooser.APPROVE_OPTION) return;
+ 
+        try {
+            detenerSimulacionAutomatica();
+            gestor = ArchivoMemoria.cargar(chooser.getSelectedFile().getAbsolutePath());
+            actualizarVista();
+            JOptionPane.showMessageDialog(this, "Simulación cargada correctamente.",
+                    "Carga", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            mostrarError("No se pudo cargar el archivo: " + ex.getMessage());
+        }
     }
  
      
