@@ -74,6 +74,66 @@ public class GestorMemoria implements Serializable{
             }
             return crecerProceso(idx, algoritmo, tamanoMaximo);
     }
+    public boolean liberarProceso(String nombre) {
+        for (BloqueMemoria b : bloques) {
+            if (b.isOcupado() && b.getProceso().getNombre().equalsIgnoreCase(nombre)) {
+                registrar("Liberado el proceso " + b.getProceso().getNombre()
+                        + " (" + b.getTamano() + " KB) en dirección " + b.getInicio() + ".");
+                b.liberar();
+                fusionarBloquesLibres();
+                return true;
+            }
+        }
+        return false;
+    }
+    private void fusionarBloquesLibres() {
+        boolean fusionoAlgo = true;
+        while (fusionoAlgo) {
+            fusionoAlgo = false;
+            for (int i = 0; i < bloques.size() - 1; i++) {
+                BloqueMemoria actual = bloques.get(i);
+                BloqueMemoria siguiente = bloques.get(i + 1);
+                if (!actual.isOcupado() && !siguiente.isOcupado()) {
+                    actual.setTamano(actual.getTamano() + siguiente.getTamano());
+                    bloques.remove(i + 1);
+                    fusionoAlgo = true;
+                    break;
+                }
+            }
+        }
+    }
+    public void compactar() {
+        List<BloqueMemoria> nuevos = new ArrayList<>();
+        int cursor = 0;
+        for (BloqueMemoria b : bloques) {
+            if (b.isOcupado()) {
+                nuevos.add(new BloqueMemoria(cursor, b.getTamano(), true, b.getProceso()));
+                cursor += b.getTamano();
+            }
+        }
+        int libreFinal = tamanoTotal - cursor;
+        if (libreFinal > 0) {
+            nuevos.add(new BloqueMemoria(cursor, libreFinal, false, null));
+        }
+        this.bloques = nuevos;
+        registrar("Memoria compactada. Espacio libre unificado al final: " + libreFinal + " KB.");
+    }
+    public EstadisticasMemoria calcularFragmentacion() {
+        int usado = 0;
+        int libre = 0;
+        int huecos = 0;
+        int mayorHueco = 0;
+        for (BloqueMemoria b : bloques) {
+            if (b.isOcupado()) {
+                usado += b.getTamano();
+            } else {
+                libre += b.getTamano();
+                huecos++;
+                mayorHueco = Math.max(mayorHueco, b.getTamano());
+            }
+        }
+        return new EstadisticasMemoria(tamanoTotal, usado, libre, huecos, mayorHueco);
+    }
     
      private String achicarProceso(int idx, int tamanoMinimo) {
         BloqueMemoria actual = bloques.get(idx);
