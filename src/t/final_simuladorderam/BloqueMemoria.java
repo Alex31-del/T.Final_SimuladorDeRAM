@@ -68,6 +68,7 @@ public class BloqueMemoria implements Serializable {
     public String toString() {
         if (ocupado) {
             return "[" + inicio + "-" + getFin() + "] OCUPADO por " + proceso.getNombre() + " (" + tamano + " KB)";
+            
         }
         return "[" + inicio + "-" + getFin() + "] LIBRE (" + tamano + " KB)";
     }
