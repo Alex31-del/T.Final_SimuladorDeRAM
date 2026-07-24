@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class TareaSimulacion implements Runnable {
 
     private static final double PROBABILIDAD_CAMBIO = 0.8;
-    private static final int SEGUNDOS_ENTRE_EVALUACIONES = 5;
+    private static final int SEGUNDOS_ENTRE_EVALUACIONES = 1;
 
     private final GestorMemoria gestor;
     private final Supplier<String> proveedorAlgoritmo;
