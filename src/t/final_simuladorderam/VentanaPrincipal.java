@@ -93,6 +93,116 @@ public class VentanaPrincipal extends JFrame {
         return panel;
     }
 
+    private JPanel construirPanelCentral() {
+        JPanel panelVisual = new JPanel(new BorderLayout());
+        panelVisual.setBorder(new TitledBorder("Mapa visual de memoria"));
+        panelVisual.add(panelMemoria, BorderLayout.CENTER);
+        panelVisual.add(etiquetaEstadisticas, BorderLayout.SOUTH);
+ 
+        JPanel panelDerecho = new JPanel(new BorderLayout(4, 4));
+        panelDerecho.setPreferredSize(new Dimension(320, 400));
+ 
+        JPanel panelTablaProcesos = new JPanel(new BorderLayout());
+        panelTablaProcesos.setBorder(new TitledBorder("Procesos en memoria"));
+        panelTablaProcesos.add(new JScrollPane(tablaProcesos), BorderLayout.CENTER);
+ 
+        JPanel botonesLista = new JPanel(new GridLayout(2, 2, 4, 4));
+        JButton botonLiberar = new JButton("Liberar");
+        botonLiberar.setBackground(new Color(229, 115, 115)); // rojo suave
+        botonLiberar.setForeground(Color.WHITE);
+        botonLiberar.setOpaque(true);
+        botonLiberar.setBorderPainted(false);
+        botonLiberar.setFocusPainted(false);
+        botonLiberar.addActionListener(e -> liberarProceso());
+        
+        JButton botonCompactar = new JButton("Compactar memoria");
+        botonCompactar.setBackground(new Color(66, 165, 245)); // azul
+        botonCompactar.setForeground(Color.WHITE);
+        botonCompactar.setOpaque(true);
+        botonCompactar.setBorderPainted(false);
+        botonCompactar.setFocusPainted(false);
+        botonCompactar.addActionListener(e -> compactarMemoria());
+        
+       
+        botonIniciar.setBackground(new Color(102, 187, 106)); // verde
+        botonIniciar.setForeground(Color.WHITE);
+        botonIniciar.setOpaque(true);
+        botonIniciar.setBorderPainted(false);
+        botonIniciar.setFocusPainted(false);
+        botonIniciar.addActionListener(e -> iniciarSimulacionAutomatica());
+        
+       
+        botonDetener.setBackground(new Color(120, 120, 120)); // gris oscuro
+        botonDetener.setForeground(Color.WHITE);
+        botonDetener.setOpaque(true);
+        botonDetener.setBorderPainted(false);
+        botonDetener.setFocusPainted(false);
+        botonDetener.addActionListener(e -> detenerSimulacionAutomatica());
+        botonDetener.setEnabled(false); 
+        botonesLista.add(botonLiberar);
+        botonesLista.add(botonCompactar);
+        botonesLista.add(botonIniciar);
+        botonesLista.add(botonDetener);
+        panelTablaProcesos.add(botonesLista, BorderLayout.SOUTH);
+ 
+        JPanel panelTablaLibres = new JPanel(new BorderLayout());
+        panelTablaLibres.setBorder(new TitledBorder("Bloques libres"));
+        panelTablaLibres.add(new JScrollPane(tablaLibres), BorderLayout.CENTER);
+        panelTablaLibres.setPreferredSize(new Dimension(320, 150));
+ 
+        JButton botonReporte = new JButton("Generar reporte");
+        botonReporte.setBackground(new Color(171, 71, 188)); // morado
+        botonReporte.setForeground(Color.WHITE);
+        botonReporte.setOpaque(true);
+        botonReporte.setBorderPainted(false);
+        botonReporte.setFocusPainted(false);
+        botonReporte.addActionListener(e -> mostrarReporte());
+        
+        JButton botonGuardar = new JButton("Guardar simulación");
+        botonGuardar.setBackground(new Color(66, 133, 244)); // azul
+        botonGuardar.setForeground(Color.WHITE);
+        botonGuardar.setOpaque(true);
+        botonGuardar.setBorderPainted(false);
+        botonGuardar.setFocusPainted(false);
+        botonGuardar.addActionListener(e -> guardarSimulacion());
+        
+        JButton botonCargar = new JButton("Cargar simulación");
+        botonCargar.setBackground(new Color(255, 167, 38)); // naranja
+        botonCargar.setForeground(Color.WHITE);
+        botonCargar.setOpaque(true);
+        botonCargar.setBorderPainted(false);
+        botonCargar.setFocusPainted(false);
+        botonCargar.addActionListener(e -> cargarSimulacion());
+        
+        JPanel panelArchivo = new JPanel(new GridLayout(3, 1, 4, 4));
+        panelArchivo.setBorder(new TitledBorder("Archivo / Reporte"));
+        panelArchivo.add(botonReporte);
+        panelArchivo.add(botonGuardar);
+        panelArchivo.add(botonCargar);
+ 
+        JPanel panelInferiorDerecho = new JPanel(new BorderLayout(4, 4));
+        panelInferiorDerecho.add(panelTablaLibres, BorderLayout.CENTER);
+        panelInferiorDerecho.add(panelArchivo, BorderLayout.SOUTH);
+ 
+        panelDerecho.add(panelTablaProcesos, BorderLayout.CENTER);
+        panelDerecho.add(panelInferiorDerecho, BorderLayout.SOUTH);
+ 
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelVisual, panelDerecho);
+        split.setResizeWeight(0.65);
+ 
+        JPanel envoltorio = new JPanel(new BorderLayout());
+        envoltorio.add(split, BorderLayout.CENTER);
+        return envoltorio;
+    }
+    
+     private JPanel construirBarraEstado() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+        panel.add(etiquetaEstadoSim, BorderLayout.WEST);
+        panel.add(etiquetaAlgoritmoActual, BorderLayout.EAST);
+        return panel;
+    }
+     
     private void crearProceso() {
         String nombre = campoNombre.getText().trim();
         int tamano = (Integer) campoTamano.getValue();
@@ -124,6 +234,75 @@ public class VentanaPrincipal extends JFrame {
         }
     }
 
+    private void iniciarSimulacionAutomatica() {
+        if (hiloSimulacion != null && hiloSimulacion.isAlive()) {
+            return; // ya hay una simulación corriendo
+        }
+
+        botonIniciar.setEnabled(false);
+        botonDetener.setEnabled(true);
+        etiquetaEstadoSim.setText("Simulación en curso...");
+
+        tareaSimulacion = new TareaSimulacion(
+                gestor,
+                () -> (String) comboAlgoritmo.getSelectedItem(),  // proveedorAlgoritmo
+                this::actualizarVista,                             // actualizarVista
+                mensaje -> {                                       // actualizarEstado
+                    if (tareaSimulacion.estaActivo()) {
+                        etiquetaEstadoSim.setText(mensaje);
+                    } else {
+                        etiquetaEstadoSim.setText("Simulación detenida.");
+                    }
+                }
+        );
+        hiloSimulacion = new Thread(tareaSimulacion);
+        hiloSimulacion.start(); // OJO: start(), nunca run() directamente
+    }
+    
+     private void detenerSimulacionAutomatica() {
+        if (tareaSimulacion != null) {
+            tareaSimulacion.detener();
+        }
+        botonIniciar.setEnabled(true);
+        botonDetener.setEnabled(false);
+        etiquetaEstadoSim.setText("Simulación detenida.");
+    }
+     
+     private void mostrarReporte() {
+        JTextArea area = new JTextArea(gestor.generarReporte());
+        area.setEditable(false);
+        area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        JScrollPane scroll = new JScrollPane(area);
+        scroll.setPreferredSize(new Dimension(560, 420));
+        JOptionPane.showMessageDialog(this, scroll, "Reporte de simulación", JOptionPane.PLAIN_MESSAGE);
+    }
+     
+    private void pedirNuevaSimulacion() {
+        String entrada = JOptionPane.showInputDialog(this,
+                "Tamaño total de la nueva memoria (KB):", "1024");
+        if (entrada == null) return;
+        try {
+            int tamano = Integer.parseInt(entrada.trim());
+            if (tamano <= 0) {
+                mostrarError("El tamaño total debe ser mayor a 0.");
+                return;
+            }
+            detenerSimulacionAutomatica();
+            iniciarNuevaSimulacion(tamano);
+            actualizarVista();
+        } catch (NumberFormatException ex) {
+            mostrarError("Debes escribir un número entero válido.");
+        }
+    }
+     private void iniciarNuevaSimulacion(int tamanoTotal) {
+        this.gestor = new GestorMemoria(tamanoTotal);
+        
+    }
+     private void mostrarError(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje, "Atención", JOptionPane.WARNING_MESSAGE);
+    }
+ 
+     
     private void actualizarVista() {
         List<BloqueMemoria> bloques = gestor.getBloques();
         panelMemoria.actualizar(bloques, gestor.getTamanoTotal());
