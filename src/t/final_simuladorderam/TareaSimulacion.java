@@ -4,10 +4,8 @@
  */
 package t.final_simuladorderam;
 
-/**
- *
- * @author Alexander
- */
+
+
 import javax.swing.SwingUtilities;
 import java.util.List;
 import java.util.function.Consumer;
@@ -28,7 +26,7 @@ public class TareaSimulacion implements Runnable {
     private int contadorSegundos = 0;
     private volatile boolean activo = true;
 
-   
+    
     public TareaSimulacion(GestorMemoria gestor,
                             Supplier<String> proveedorAlgoritmo,
                             Runnable actualizarVista,
@@ -52,7 +50,7 @@ public class TareaSimulacion implements Runnable {
     public void run() {
         while (activo) {
             try {
-                Thread.sleep(1000); 
+                Thread.sleep(1000); // pausa en el hilo secundario, no en el de la interfaz
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return;
@@ -75,14 +73,20 @@ public class TareaSimulacion implements Runnable {
             }
 
             // 3) Arma el mensaje de estado.
-            StringBuilder estado = new StringBuilder("Simulación en curso...");
-            if (!liberados.isEmpty()) {
-                estado.append(" (se liberó: ").append(String.join(", ", liberados)).append(")");
+            String mensajeFinal;
+            if (gestor.getBloquesLibres().size() == gestor.getBloques().size()) {
+                // Toda la memoria está libre: no hay procesos que simular.
+                mensajeFinal = "Simulación en curso... (sin procesos activos)";
+            } else {
+                StringBuilder estado = new StringBuilder("Simulación en curso...");
+                if (!liberados.isEmpty()) {
+                    estado.append(" (se liberó: ").append(String.join(", ", liberados)).append(")");
+                }
+                if (cambioMemoria != null) {
+                    estado.append(" | ").append(cambioMemoria);
+                }
+                mensajeFinal = estado.toString();
             }
-            if (cambioMemoria != null) {
-                estado.append(" | ").append(cambioMemoria);
-            }
-            String mensajeFinal = estado.toString();
 
             // 4) Envía la actualización visual al hilo de Swing.
             SwingUtilities.invokeLater(() -> {
