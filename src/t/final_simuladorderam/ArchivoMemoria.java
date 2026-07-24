@@ -4,10 +4,6 @@
  */
 package t.final_simuladorderam;
 
-/**
- *
- * @author user
- */
 import java.awt.*;
 import java.io.*;
 
